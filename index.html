@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Muhammed Shehzad Hassan · Structural Integrity Portfolio</title>
+<meta name="description" content="Simulation portfolio of Muhammed Shehzad Hassan: FEA of composite and metallic structures, validated against hand calculations.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Semi+Condensed:wght@500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;1,8..60,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F6F8F9;      /* cool drawing-office white */
+    --ink:#1B2530;        /* graphite */
+    --steel:#35556F;      /* steel blue */
+    --muted:#5E6B77;
+    --rule:#D5DCE2;
+    --hot:#C8321E;        /* contour maximum */
+    --ok:#2F7D4F;
+    --panel:#FFFFFF;
+    --legend:linear-gradient(90deg,#1F3FB8 0%,#1E8FD6 18%,#22B8A0 34%,#57C23A 50%,#D8D42A 66%,#F08A1D 82%,#C8321E 100%);
+    --measure:68ch;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+  body{margin:0;background:var(--paper);color:var(--ink);
+    font:400 17px/1.6 "Barlow",system-ui,-apple-system,"Segoe UI",sans-serif;}
+  a{color:var(--steel);text-underline-offset:3px}
+  a:hover{color:var(--ink)}
+  :focus-visible{outline:3px solid var(--steel);outline-offset:3px;border-radius:2px}
+  img{max-width:100%;display:block}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+  h1,h2,h3{font-family:"Barlow Semi Condensed","Barlow",sans-serif;line-height:1.15;margin:0}
+  h2{font-size:2rem;font-weight:700;letter-spacing:-.01em}
+  h3{font-size:1.25rem;font-weight:600}
+  p{margin:0 0 1em;max-width:var(--measure)}
+  .math{font-family:"Source Serif 4",Georgia,serif;font-style:italic}
+
+  /* ---------- Legend strip: the signature element ---------- */
+  .legend{height:8px;background:var(--legend);border-radius:1px}
+  .legend-scale{display:flex;justify-content:space-between;font-size:.8rem;color:var(--muted);margin-top:6px}
+
+  /* ---------- Header ---------- */
+  header.site{padding:56px 0 40px}
+  .who{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;align-items:baseline}
+  .who h1{font-size:clamp(2.2rem,5vw,3.4rem);font-weight:700;letter-spacing:-.015em}
+  .role{font-size:1.1rem;color:var(--muted);margin-top:6px}
+  .links{display:flex;gap:18px;flex-wrap:wrap;font-weight:500}
+  .claim{margin:48px 0 14px;font-family:"Barlow Semi Condensed",sans-serif;
+    font-size:clamp(1.8rem,4.2vw,2.9rem);font-weight:600;line-height:1.12;max-width:22ch}
+  .claim-sub{color:var(--muted);font-size:1.1rem;max-width:58ch;margin-bottom:32px}
+  .hero-legend{max-width:560px}
+
+  /* ---------- Sections ---------- */
+  section{padding:56px 0;border-top:1px solid var(--rule)}
+  .sec-head{margin-bottom:28px}
+  .sec-head p{color:var(--muted);margin-top:8px}
+
+  /* Workflow (a real sequence, so it is numbered) */
+  .steps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,1fr);gap:0;border:1px solid var(--rule);background:var(--panel)}
+  .steps li{padding:20px;border-right:1px solid var(--rule)}
+  .steps li:last-child{border-right:0}
+  .steps .n{font-family:"Barlow Semi Condensed",sans-serif;font-weight:700;color:var(--steel);font-size:1.1rem}
+  .steps h3{margin:4px 0 6px;font-size:1.1rem}
+  .steps p{font-size:.95rem;color:var(--muted);margin:0}
+
+  /* ---------- Project ---------- */
+  .project{display:grid;grid-template-columns:250px 1fr;gap:40px;padding:48px 0;border-top:1px solid var(--rule)}
+  .project > *{min-width:0}
+  .project:first-of-type{border-top:0;padding-top:8px}
+  .meta{font-size:.95rem;color:var(--muted)}
+  .meta h3{color:var(--ink);font-size:1.5rem;margin-bottom:12px}
+  .meta dl{margin:0}
+  .meta dt{font-weight:600;color:var(--ink);margin-top:10px}
+  .meta dd{margin:0}
+  .summary{font-size:1.1rem}
+
+  /* Check table: prediction vs simulation */
+  .checks{width:100%;border-collapse:collapse;background:var(--panel);border:1px solid var(--rule);margin:8px 0 24px;font-size:.97rem}
+  .checks caption{text-align:left;font-weight:600;padding:0 0 8px;font-family:"Barlow Semi Condensed",sans-serif;font-size:1.1rem}
+  .checks th,.checks td{padding:10px 14px;border-bottom:1px solid var(--rule);text-align:left;vertical-align:middle}
+  .checks thead th{font-weight:600;color:var(--muted);font-size:.88rem;background:#EEF2F5}
+  .checks td.num{font-variant-numeric:tabular-nums;white-space:nowrap}
+  .dev{display:flex;align-items:center;gap:10px;white-space:nowrap;font-variant-numeric:tabular-nums}
+  .bar{position:relative;width:110px;height:10px;background:#E7ECF0;border-radius:1px;flex:none}
+  .bar::before{content:"";position:absolute;left:50%;top:-3px;bottom:-3px;width:1px;background:var(--muted)}
+  .bar i{position:absolute;top:0;bottom:0;background:var(--steel)}
+  .bar i.warn{background:#D08A1E}
+  .checks .note{color:var(--muted);font-size:.9rem}
+  .scale-note{font-size:.85rem;color:var(--muted);margin:-16px 0 24px}
+
+  /* Figures */
+  .figs{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin:8px 0 24px}
+  figure{margin:0;background:var(--panel);border:1px solid var(--rule)}
+  figure img{width:100%;aspect-ratio:4/3;object-fit:cover;background:#E9EEF2}
+  figure.wide{grid-column:1/-1}
+  figure.wide img{aspect-ratio:16/7}
+  figcaption{padding:10px 12px;font-size:.9rem;color:var(--muted)}
+  .ph{aspect-ratio:4/3;display:flex;align-items:center;justify-content:center;text-align:center;
+    color:var(--muted);font-size:.85rem;border-bottom:1px dashed var(--rule);background:
+    repeating-linear-gradient(45deg,#EEF2F5 0 10px,#F4F7F9 10px 20px);padding:12px}
+  figure.wide .ph{aspect-ratio:16/7}
+
+  /* Details */
+  details{border:1px solid var(--rule);background:var(--panel);margin:0 0 12px}
+  summary{cursor:pointer;padding:14px 16px;font-weight:600;list-style-position:inside}
+  details[open] summary{border-bottom:1px solid var(--rule)}
+  .dbody{padding:16px 18px 6px}
+  .eq{font-family:"Source Serif 4",Georgia,serif;font-size:1.05rem;background:#F1F4F7;border-left:3px solid var(--steel);
+    padding:10px 14px;margin:6px 0 14px;overflow-x:auto;white-space:nowrap}
+  .eq b{font-style:normal;font-family:"Barlow",sans-serif;font-weight:600;color:var(--hot)}
+  .dbody ul{margin:0 0 1em;padding-left:1.2em;max-width:var(--measure)}
+  .dbody li{margin-bottom:6px}
+  .table-scroll{overflow-x:auto}
+
+  /* Convergence chart */
+  .chart{background:var(--panel);border:1px solid var(--rule);padding:14px 14px 6px;margin:6px 0 16px}
+  .chart svg{width:100%;height:auto;display:block}
+  .chart text{font-family:"Barlow",sans-serif;font-size:12px;fill:var(--muted)}
+
+  .takeaway{border-left:4px solid var(--hot);padding:4px 0 4px 16px;font-size:1.08rem;margin:18px 0 0;max-width:var(--measure)}
+
+  /* Skills / next */
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:40px}
+  .skills dt{font-weight:600;margin-top:12px}
+  .skills dd{margin:2px 0 0;color:var(--muted)}
+  .next{list-style:none;padding:0;margin:0}
+  .next li{padding:12px 0;border-bottom:1px solid var(--rule)}
+  .next li:last-child{border-bottom:0}
+  .next strong{display:block}
+  .next span{color:var(--muted);font-size:.95rem}
+
+  footer{padding:40px 0 64px;border-top:1px solid var(--rule);color:var(--muted);font-size:.95rem}
+  footer .legend{margin-bottom:24px}
+
+  @media (max-width:860px){
+    .project{grid-template-columns:1fr;gap:18px}
+    .steps{grid-template-columns:1fr 1fr}
+    .steps li:nth-child(2){border-right:0}
+    .steps li:nth-child(-n+2){border-bottom:1px solid var(--rule)}
+    .two{grid-template-columns:1fr}
+  }
+  @media (max-width:560px){
+    body{font-size:16px}
+    .figs{grid-template-columns:1fr}
+    .steps{grid-template-columns:1fr}
+    .steps li{border-right:0;border-bottom:1px solid var(--rule)}
+    .steps li:last-child{border-bottom:0}
+    .bar{width:70px}
+    .checks th,.checks td{padding:8px 10px}
+    .checks{display:block;overflow-x:auto}
+  }
+  @media print{
+    body{background:#fff}
+    details{border:0} details > summary{display:none}
+    details:not([open]) .dbody{display:block}
+  }
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <div class="who">
+      <div>
+        <h1>Muhammed Shehzad Hassan</h1>
+        <div class="role">Materials engineer, M.Sc. RWTH Aachen (Structural Integrity), available from January 2027</div>
+      </div>
+      <nav class="links" aria-label="Contact">
+        <a href="Shehzad_Hassan_CV.pdf">Download CV (PDF)</a>
+        <a href="https://www.linkedin.com/in/shehzad-hassan-6b0656214/?isSelfProfile=true">LinkedIn</a>
+        <a href="mailto:shehzadhassanbiz@gmail.com">Email</a>
+      </nav>
+    </div>
+
+    <p class="claim">I predict every simulation result by hand before I trust it.</p>
+    <p class="claim-sub">Finite element analysis of composite and metallic structures, with each model checked against theory and every difference explained. Focus: damage mechanics, fracture mechanics and failure assessment.</p>
+
+    <div class="hero-legend" aria-hidden="true">
+      <div class="legend"></div>
+      <div class="legend-scale"><span>far from the limit</span><span>at the limit</span></div>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <!-- ================= Workflow ================= -->
+  <section id="method">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2>How each project is built</h2>
+        <p>The same four steps in every project, so the result can be defended line by line.</p>
+      </div>
+      <ol class="steps">
+        <li><div class="n">1</div><h3>Theory</h3><p>Reduce the problem to a textbook case and state the assumptions.</p></li>
+        <li><div class="n">2</div><h3>Hand calculation</h3><p>Predict the key numbers on paper before opening the software.</p></li>
+        <li><div class="n">3</div><h3>Simulation</h3><p>Build the FE model, check convergence and boundary conditions.</p></li>
+        <li><div class="n">4</div><h3>Explain the gap</h3><p>Compare prediction and result, and account for every difference.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ================= Projects ================= -->
+  <section id="projects">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2>Projects</h2>
+        <p>Deviation bars show the simulation relative to the hand prediction, on a scale of ±10&nbsp;%.</p>
+      </div>
+
+      <!-- ---------- Project: CFRP ---------- -->
+      <article class="project" id="cfrp">
+        <div class="meta">
+          <h3>First ply failure of an open-hole carbon fibre laminate</h3>
+          <dl>
+            <dt>Tools</dt><dd>Ansys ACP, Ansys Mechanical 2026 R1</dd>
+            <dt>Methods</dt><dd>Classical laminate theory, layered shells, Tsai-Wu failure criterion</dd>
+            <dt>Year</dt><dd>2026</dd>
+          </dl>
+        </div>
+        <div>
+          <p class="summary">A quasi-isotropic [0/45/−45/90]<sub>s</sub> carbon/epoxy plate with a central hole, pulled in tension. The question: where does it start to crack, in which ply, and at what load?</p>
+
+          <table class="checks">
+            <caption>Prediction vs simulation</caption>
+            <thead><tr><th scope="col">Quantity</th><th scope="col">Hand</th><th scope="col">Ansys</th><th scope="col">Deviation</th></tr></thead>
+            <tbody>
+              <tr><td>Laminate stiffness <span class="math">E<sub>x</sub></span></td><td class="num">47.0 GPa</td><td class="num">47.04 GPa</td><td><div class="dev"><span class="bar"><i style="left:50%;width:0.5%"></i></span>+0.1 %</div></td></tr>
+              <tr><td>Far-field strain</td><td class="num">0.00106</td><td class="num">0.00107</td><td><div class="dev"><span class="bar"><i style="left:50%;width:4.5%"></i></span>+0.9 %</div></td></tr>
+              <tr><td>Peak strain at the hole</td><td class="num">0.0033</td><td class="num">0.00327</td><td><div class="dev"><span class="bar"><i style="left:45.5%;width:4.5%"></i></span>−0.9 %</div></td></tr>
+              <tr><td>First ply failure load</td><td class="num">11.1 kN</td><td class="num">10.1 kN</td><td><div class="dev"><span class="bar"><i class="warn" style="left:5%;width:45%"></i></span>−9 %</div></td></tr>
+              <tr><td>Failure location</td><td colspan="3" class="note">90° plies (layers 4 and 5) at the hole edge, predicted and confirmed</td></tr>
+            </tbody>
+          </table>
+
+          <div class="figs">
+            <figure>
+              <img src="images/P2_layup.png" alt="Layup plot showing eight plies of 0.25 mm: 0, 45, −45, 90, 90, −45, 45, 0 degrees" loading="lazy">
+              <figcaption>Layup verified at a sampling point: 8 plies, 2.0&nbsp;mm.</figcaption>
+            </figure>
+            <figure>
+              <img src="images/P2_engineering_constants.png" alt="ACP engineering constants window showing laminate stiffness E1 and E2 of 47,036 MPa" loading="lazy">
+              <figcaption>Laminate stiffness 47,036&nbsp;MPa in both directions, matching laminate theory.</figcaption>
+            </figure>
+            <figure>
+              <img src="images/P2_strain.png" alt="Mid-plane strain contour with diagonal butterfly-shaped lobes around the hole" loading="lazy">
+              <figcaption>Mid-plane strain: the lobes follow the ±45° fibres.</figcaption>
+            </figure>
+            <figure>
+              <img src="images/P2_IRF_full.png" alt="Inverse reserve factor contour with the maximum at the top and bottom edges of the hole" loading="lazy">
+              <figcaption>Tsai-Wu inverse reserve factor: 0.99 at 10&nbsp;kN at the hole edge.</figcaption>
+            </figure>
+          </div>
+
+          <details>
+            <summary>Hand calculation</summary>
+            <div class="dbody">
+              <p>Ply stiffness from the material data (E<sub>1</sub> = 121 GPa, E<sub>2</sub> = 8.6 GPa, ν<sub>12</sub> = 0.27, G<sub>12</sub> = 4.7 GPa):</p>
+              <div class="eq">Q<sub>11</sub> = E<sub>1</sub>/(1 − ν<sub>12</sub>ν<sub>21</sub>) = 121.6 GPa &nbsp;&nbsp; Q<sub>22</sub> = 8.65 GPa &nbsp;&nbsp; Q<sub>12</sub> = 2.33 GPa &nbsp;&nbsp; Q<sub>66</sub> = 4.7 GPa</div>
+              <p>Averaging the rotated ply stiffness over the stack (two plies at 0°, four at ±45°, two at 90°):</p>
+              <div class="eq">A<sub>11</sub>/h = (2·121.6 + 4·38.4 + 2·8.65)/8 = 51.8 GPa &nbsp;&nbsp; E<sub>x</sub> = (A<sub>11</sub>² − A<sub>12</sub>²)/A<sub>11</sub> = <b>47.0 GPa</b></div>
+              <p>Peak strain at the hole, then the stress across the fibres in a 90° ply, including the Poisson narrowing:</p>
+              <div class="eq">ε<sub>x</sub> = K<sub>t</sub>·σ<sub>net</sub>/E<sub>x</sub> = 0.0033 &nbsp;&nbsp; σ<sub>2</sub> = Q<sub>22</sub>ε<sub>x</sub> + Q<sub>12</sub>(−ν<sub>xy</sub>ε<sub>x</sub>) ≈ <b>26 MPa</b></div>
+              <p>Against a transverse tensile strength of 29&nbsp;MPa, the 90° plies are at 90&nbsp;% of their limit at 10&nbsp;kN, so first ply failure is predicted at about 11&nbsp;kN.</p>
+            </div>
+          </details>
+
+          <details>
+            <summary>Model and discussion</summary>
+            <div class="dbody">
+              <ul>
+                <li>Surface geometry meshed with layered shell elements; eight 0.25&nbsp;mm plies defined in ACP with the 0° direction along the load.</li>
+                <li>Ansys is about 9&nbsp;% more critical than the hand estimate because Tsai-Wu combines all ply stresses, while the hand check uses only the stress across the fibres.</li>
+                <li>First ply failure is matrix cracking, not rupture: the 0° fibres are at roughly 18&nbsp;% of their strength at the same load.</li>
+                <li><strong>Error caught by the hand check:</strong> the first run showed 88&nbsp;mm of deflection where 0.33&nbsp;mm was expected. The plies were stacked on one side of the reference surface, so the load acted 1&nbsp;mm off-centre and bent the plate. A beam estimate of this bending gave 86&nbsp;mm, confirming the cause before it was corrected.</li>
+              </ul>
+            </div>
+          </details>
+
+          <p class="takeaway">A result is only as good as its check: the hand calculation exposed an 88&nbsp;mm error and traced it to a 1&nbsp;mm offset.</p>
+        </div>
+      </article>
+
+      <!-- ---------- Project: Plate with hole ---------- -->
+      <article class="project" id="plate">
+        <div class="meta">
+          <h3>Stress concentration in a plate with a hole</h3>
+          <dl>
+            <dt>Tools</dt><dd>Ansys Discovery, Ansys Mechanical 2026 R1</dd>
+            <dt>Methods</dt><dd>Linear static FEA, mesh convergence, analytical validation</dd>
+            <dt>Year</dt><dd>2026</dd>
+          </dl>
+        </div>
+        <div>
+          <p class="summary">A 300 × 100 × 5&nbsp;mm steel plate with a Ø20&nbsp;mm hole under 25&nbsp;kN tension, validated against the analytical stress concentration solution.</p>
+
+          <table class="checks">
+            <caption>Prediction vs simulation</caption>
+            <thead><tr><th scope="col">Quantity</th><th scope="col">Hand</th><th scope="col">Ansys</th><th scope="col">Deviation</th></tr></thead>
+            <tbody>
+              <tr><td>Peak stress at the hole</td><td class="num">157 MPa</td><td class="num">159 MPa</td><td><div class="dev"><span class="bar"><i style="left:50%;width:6.5%"></i></span>+1.3 %</div></td></tr>
+              <tr><td>Far-field stress</td><td class="num">50 MPa</td><td class="num">50.4 MPa</td><td><div class="dev"><span class="bar"><i style="left:50%;width:4.5%"></i></span>+0.9 %</div></td></tr>
+              <tr><td>Elongation</td><td class="num">0.075 mm</td><td class="num">0.077 mm</td><td><div class="dev"><span class="bar"><i style="left:50%;width:14.5%"></i></span>+2.9 %</div></td></tr>
+            </tbody>
+          </table>
+
+          <div class="chart">
+            <svg viewBox="0 0 560 250" role="img" aria-labelledby="convTitle convDesc">
+              <title id="convTitle">Mesh convergence of peak stress</title>
+              <desc id="convDesc">Peak stress for four meshes: 158.3 MPa at 8,760 nodes, 157.7 at 19,596, 160.7 at 31,915 and 158.7 at 65,605, compared with the analytical 157 MPa.</desc>
+              <!-- axes: x 60..540 for nodes 0..70000 ; y 210..20 for 150..165 MPa -->
+              <line x1="60" y1="210" x2="540" y2="210" stroke="#5E6B77"/>
+              <line x1="60" y1="20" x2="60" y2="210" stroke="#5E6B77"/>
+              <g stroke="#D5DCE2">
+                <line x1="60" y1="146.7" x2="540" y2="146.7"/><line x1="60" y1="83.3" x2="540" y2="83.3"/><line x1="60" y1="20" x2="540" y2="20"/>
+              </g>
+              <text x="52" y="214" text-anchor="end">150</text>
+              <text x="52" y="150.7" text-anchor="end">155</text>
+              <text x="52" y="87.3" text-anchor="end">160</text>
+              <text x="52" y="24" text-anchor="end">165</text>
+              <text x="60" y="230" text-anchor="middle">0</text>
+              <text x="197" y="230" text-anchor="middle">20k</text>
+              <text x="334" y="230" text-anchor="middle">40k</text>
+              <text x="471" y="230" text-anchor="middle">60k</text>
+              <text x="300" y="248" text-anchor="middle">nodes</text>
+              <text x="14" y="120" transform="rotate(-90 14 120)" text-anchor="middle">peak stress (MPa)</text>
+              <!-- analytical 157 -> y = 210 - (7/15)*190 = 121.3 -->
+              <line x1="60" y1="121.3" x2="540" y2="121.3" stroke="#C8321E" stroke-dasharray="6 5"/>
+              <text x="536" y="114" text-anchor="end" style="fill:#C8321E">analytical 157 MPa</text>
+              <!-- points: x = 60 + nodes/70000*480 ; y = 210 - (s-150)/15*190 -->
+              <polyline fill="none" stroke="#35556F" stroke-width="2" points="120.1,104.9 194.4,112.5 278.8,74.0 509.9,99.3"/>
+              <g fill="#35556F">
+                <circle cx="120.1" cy="104.9" r="5"/><circle cx="194.4" cy="112.5" r="5"/><circle cx="278.8" cy="74.0" r="5"/><circle cx="509.9" cy="99.3" r="5"/>
+              </g>
+              <text x="120.1" y="92" text-anchor="middle">4 mm</text>
+              <text x="194.4" y="134" text-anchor="middle">2 mm</text>
+              <text x="278.8" y="62" text-anchor="middle">1 mm</text>
+              <text x="509.9" y="86" text-anchor="middle">0.5 mm</text>
+            </svg>
+          </div>
+
+          <div class="figs">
+            <figure>
+              <img src="images/P1_stress.png" alt="Normal stress contour with the maximum at the top and bottom of the hole" loading="lazy">
+              <figcaption>Normal stress along the load: peak at the top and bottom of the hole.</figcaption>
+            </figure>
+            <figure>
+              <img src="images/P1_mesh_hole.png" alt="Refined mesh around the hole" loading="lazy">
+              <figcaption>Mesh refined locally at the hole, coarse elsewhere.</figcaption>
+            </figure>
+          </div>
+
+          <details>
+            <summary>Hand calculation</summary>
+            <div class="dbody">
+              <div class="eq">σ<sub>net</sub> = F/((W − d)·t) = 25,000/(80·5) = 62.5 MPa</div>
+              <div class="eq">K<sub>t,net</sub> = 2 + (1 − d/W)³ = 2.51 &nbsp;&nbsp; σ<sub>max</sub> = K<sub>t,net</sub>·σ<sub>net</sub> = <b>157 MPa</b></div>
+              <div class="eq">δ = F·L/(A·E) = 25,000·300/(500·200,000) = <b>0.075 mm</b></div>
+            </div>
+          </details>
+
+          <details>
+            <summary>Mesh convergence and discussion</summary>
+            <div class="dbody">
+              <div class="table-scroll">
+              <table class="checks">
+                <thead><tr><th scope="col">Hole element size</th><th scope="col">Nodes</th><th scope="col">Peak stress</th><th scope="col">vs 157 MPa</th></tr></thead>
+                <tbody>
+                  <tr><td>4 mm</td><td class="num">8,760</td><td class="num">158.3 MPa</td><td class="num">+0.8 %</td></tr>
+                  <tr><td>2 mm</td><td class="num">19,596</td><td class="num">157.7 MPa</td><td class="num">+0.4 %</td></tr>
+                  <tr><td>1 mm</td><td class="num">31,915</td><td class="num">160.7 MPa</td><td class="num">+2.4 %</td></tr>
+                  <tr><td>0.5 mm</td><td class="num">65,605</td><td class="num">158.7 MPa</td><td class="num">+1.1 %</td></tr>
+                </tbody>
+              </table>
+              </div>
+              <ul>
+                <li>All meshes fall within ±2.5&nbsp;% of theory. The small scatter comes from reading the peak at a single node, whose position on the hole edge shifts with each mesh.</li>
+                <li>The 2&nbsp;mm mesh gives the same accuracy as 0.5&nbsp;mm with 70&nbsp;% fewer nodes, so it is the efficient choice for design work.</li>
+                <li>Elongation is 3&nbsp;% above the bar formula because the hole softens the plate, which the formula ignores.</li>
+              </ul>
+            </div>
+          </details>
+
+          <p class="takeaway">An FE result is trustworthy once it matches theory and stops changing with the mesh.</p>
+        </div>
+      </article>
+
+      <!-- ---------- Project: CFD ---------- -->
+      <article class="project" id="cfd">
+        <div class="meta">
+          <h3>Free-surface flow over a bed ridge</h3>
+          <dl>
+            <dt>Tools</dt><dd>OpenFOAM, FreeCAD, ParaView</dd>
+            <dt>Methods</dt><dd>Two-phase CFD, local mesh refinement, validation against flume experiments</dd>
+            <dt>Context</dt><dd>University of Oldenburg / Hochschule Emden-Leer, team of three, 2023</dd>
+          </dl>
+        </div>
+        <div>
+          <p class="summary">Water flowing over a ridge in a 16&nbsp;m laboratory flume at 0.152&nbsp;m³/s, simulated and compared point by point with measured water levels.</p>
+
+          <table class="checks">
+            <caption>Experiment vs simulation</caption>
+            <thead><tr><th scope="col">Quantity</th><th scope="col">Flume</th><th scope="col">OpenFOAM</th><th scope="col">Result</th></tr></thead>
+            <tbody>
+              <tr><td>Water level, 26 stations</td><td colspan="2" class="note">6.0 to 11.0 m downstream</td><td class="num">mean deviation ≈ 2 cm (7 %)</td></tr>
+              <tr><td>Agreement downstream of 9.2 m</td><td colspan="2" class="note">recovered flow</td><td class="num">within ≈ 1–2 cm</td></tr>
+              <tr><td>Water-level dip</td><td class="num">at 7.0 m</td><td class="num">at 9.0 m</td><td class="note">shifted downstream</td></tr>
+            </tbody>
+          </table>
+
+          <div class="figs">
+            <figure class="wide">
+              <img src="images/CFD_comparison.png" alt="Measured and simulated water levels along the flume" loading="lazy">
+              <figcaption>Measured vs simulated water levels along the flume.</figcaption>
+            </figure>
+          </div>
+
+          <details>
+            <summary>Model and discussion</summary>
+            <div class="dbody">
+              <ul>
+                <li>Bed ridge modelled in FreeCAD; domain meshed with blockMesh and snappyHexMesh, refined where the lab showed strong turbulence; run in parallel on four cores.</li>
+                <li>Constant inflow of 0.152&nbsp;m³/s at 0.335&nbsp;m depth, as in the experiment.</li>
+                <li>The main mismatch is the position of the water-level dip. Likely causes are the coarse base mesh and turbulence modelling near the jump, plus reading errors in a highly turbulent lab flow. No mesh study was done at the time; this is now standard in my work.</li>
+              </ul>
+            </div>
+          </details>
+
+          <p class="takeaway">Explaining where a model disagrees with an experiment is more useful than a perfect match.</p>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ================= Skills & next ================= -->
+  <section id="skills">
+    <div class="wrap two">
+      <div>
+        <h2>Skills</h2>
+        <dl class="skills">
+          <dt>Simulation</dt><dd>Ansys Mechanical, Ansys ACP, Abaqus (coursework), OpenFOAM</dd>
+          <dt>Engineering methods</dt><dd>Laminate theory, stress concentration, damage and fracture mechanics, failure criteria, analytical validation</dd>
+          <dt>Programming and data</dt><dd>Python, C/C++</dd>
+          <dt>Background</dt><dd>M.Sc. Materials Engineering, RWTH Aachen; thesis at Fraunhofer IPT on a Digital Shadow for recycled carbon fibre tapes; two years of engineering work in India</dd>
+          <dt>Languages</dt><dd>English (C1), German (A1/A2, improving)</dd>
+        </dl>
+      </div>
+      <div>
+        <h2>In progress</h2>
+        <ul class="next">
+          <li><strong>Crack growth in a cracked plate</strong><span>Stress intensity factors, J-integral and fatigue crack growth with Paris' law.</span></li>
+          <li><strong>Why the Comet's windows failed</strong><span>Fatigue at square window corners under cabin pressure cycles.</span></li>
+          <li><strong>Delamination in a double cantilever beam</strong><span>Cohesive zone modelling and fracture toughness of recycled fibre laminates.</span></li>
+          <li><strong>Flexible F1 wings</strong><span>Composite bend-twist coupling: passing a static test yet deflecting on track.</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="legend" aria-hidden="true"></div>
+    <p>Muhammed Shehzad Hassan, Aachen, Germany · <a href="mailto:shehzadhassanbiz@gmail.com">shehzadhassanbiz@gmail.com</a> · <a href="https://www.linkedin.com/in/shehzad-hassan-6b0656214/?isSelfProfile=true">LinkedIn</a></p>
+    <p>All projects built with Ansys Student and OpenFOAM on generic geometries; no company data used.</p>
+  </div>
+</footer>
+
+<script>
+  // Show a labelled placeholder until the matching image is uploaded.
+  document.querySelectorAll('figure img').forEach(function (img) {
+    img.addEventListener('error', function () {
+      var ph = document.createElement('div');
+      ph.className = 'ph';
+      ph.setAttribute('role', 'img');
+      ph.setAttribute('aria-label', img.alt);
+      ph.textContent = 'Upload ' + img.getAttribute('src');
+      img.replaceWith(ph);
+    }, { once: true });
+  });
+</script>
+</body>
+</html>
