@@ -9,7 +9,7 @@ Structural integrity simulation portfolio: FEA of composite and metallic structu
 3. Click **Add file → Upload files** and upload:
    - `index.html`
    - `README.md`
-   - your CV as `Shehzad_Hassan_CV.pdf`
+   - your CVs as `CV_Shehzad_Hassan_EN.pdf` and `CV_Shehzad_Hassan_DE.pdf`
    - the `images` folder with the files listed below
 4. Click **Commit changes**.
 5. Go to **Settings → Pages**, set **Source** to *Deploy from a branch*, branch `main`, folder `/ (root)`, then **Save**.
