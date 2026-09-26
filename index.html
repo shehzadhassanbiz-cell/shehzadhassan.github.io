@@ -211,6 +211,95 @@
         <p>Deviation bars show the simulation relative to the hand prediction, on a scale of ±10&nbsp;%.</p>
       </div>
 
+      <!-- ---------- Project: H2 tank ---------- -->
+      <article class="project" id="h2tank">
+        <div class="meta">
+          <h3>A 700&nbsp;bar hydrogen tank: sizing the carbon fibre wall</h3>
+          <dl>
+            <dt>Tools</dt><dd>Ansys Discovery, Ansys ACP, Ansys Mechanical 2026 R1</dd>
+            <dt>Methods</dt><dd>Netting theory, classical laminate theory, layered shells, symmetry modelling, Max Stress / Tsai-Wu / Hashin / Puck</dd>
+            <dt>Year</dt><dd>2026</dd>
+          </dl>
+        </div>
+        <div>
+          <p class="summary">The cylinder of a type&nbsp;4 hydrogen tank (plastic liner, carbon fibre wall) at 700&nbsp;bar working pressure. The questions: how thick must the wound wall be, which layer cracks first, and does the tank still meet the burst requirement?</p>
+
+          <table class="checks">
+            <caption>Prediction vs simulation (middle of the tank, 70&nbsp;MPa)</caption>
+            <thead><tr><th scope="col">Quantity</th><th scope="col">Hand</th><th scope="col">Ansys</th><th scope="col">Deviation</th></tr></thead>
+            <tbody>
+              <tr><td>Radial growth</td><td class="num">1.15 mm</td><td class="num">1.153 mm</td><td><div class="dev"><span class="bar"><i style="left:50%;width:1.5%"></i></span>+0.3 %</div></td></tr>
+              <tr><td>Fibre stress, hoop layers</td><td class="num">950 MPa</td><td class="num">943.5 MPa</td><td><div class="dev"><span class="bar"><i style="left:46.5%;width:3.5%"></i></span>−0.7 %</div></td></tr>
+              <tr><td>Fibre stress, helical layers</td><td class="num">800 MPa</td><td class="num">800.9 MPa</td><td><div class="dev"><span class="bar"><i style="left:50%;width:0.5%"></i></span>+0.1 %</div></td></tr>
+              <tr><td>Stress across the fibres, innermost layer</td><td class="num">81 MPa</td><td class="num">80.8 MPa</td><td><div class="dev"><span class="bar"><i style="left:48.5%;width:1.5%"></i></span>−0.3 %</div></td></tr>
+              <tr><td>Inverse reserve factor, all criteria</td><td class="num">2.8</td><td class="num">2.7–3.0</td><td class="note">Puck mode A: matrix cracking</td></tr>
+              <tr><td>Inverse reserve factor, fibres only</td><td class="num">0.43</td><td class="num">0.42–0.46</td><td class="note">fibre tension</td></tr>
+              <tr><td>Burst pressure (fibre failure)</td><td class="num">≥ 157.5 MPa</td><td class="num">≈ 163 MPa</td><td class="note">meets 2.25 × working pressure</td></tr>
+            </tbody>
+          </table>
+
+          <div class="figs">
+            <figure>
+              <img src="images/P3_layup.png" alt="ACP thickness plot of the quarter cylinder, uniform 16.25 mm" loading="lazy">
+              <figcaption>Wound wall: 24 helical layers at ±15° plus 41 hoop layers at 90°, 16.25&nbsp;mm.</figcaption>
+            </figure>
+            <figure>
+              <img src="images/P3_radial_def.png" alt="Radial deformation contour with probe values of about 1.15 mm in the middle of the tank" loading="lazy">
+              <figcaption>Radial growth 1.15&nbsp;mm, uniform over the middle; the loaded end at the top is excluded.</figcaption>
+            </figure>
+            <figure>
+              <img src="images/P3_hoop_fibre_stress.png" alt="Fibre-direction stress in a hoop layer, 943 MPa in the middle of the tank" loading="lazy">
+              <figcaption>Fibre stress in the hoop layers: 943&nbsp;MPa.</figcaption>
+            </figure>
+            <figure>
+              <img src="images/P3_helical_fibre_stress.png" alt="Fibre-direction stress in a helical layer, 801 MPa in the middle of the tank" loading="lazy">
+              <figcaption>Fibre stress in the helical layers: 801&nbsp;MPa.</figcaption>
+            </figure>
+            <figure>
+              <img src="images/P3_IRF_all.png" alt="Inverse reserve factor above 1 everywhere, labelled Puck mode A, mostly in layer 1" loading="lazy">
+              <figcaption>All criteria: the matrix cracks at working pressure, first in layer&nbsp;1 next to the liner.</figcaption>
+            </figure>
+            <figure>
+              <img src="images/P3_IRF_fibre.png" alt="Fibre-only inverse reserve factor between 0.42 and 0.46 in the middle of the tank" loading="lazy">
+              <figcaption>Fibres only: 0.42–0.46, so the fibres carry the pressure with margin to burst.</figcaption>
+            </figure>
+          </div>
+
+          <details>
+            <summary>Hand calculation</summary>
+            <div class="dbody">
+              <p>Wall forces per unit length of a closed cylinder (R = 150&nbsp;mm), sized at the burst pressure p<sub>b</sub> = 2.25 × 70 = 157.5&nbsp;MPa:</p>
+              <div class="eq">N<sub>hoop</sub> = p<sub>b</sub>R = 23,625 N/mm &nbsp;&nbsp; N<sub>axial</sub> = p<sub>b</sub>R/2 = 11,813 N/mm</div>
+              <p>Netting theory (fibres carry everything, resin nothing), fibre strength X = 2,231&nbsp;MPa, helical angle α = 15°:</p>
+              <div class="eq">t<sub>helical</sub> = N<sub>axial</sub>/(X cos²α) = 5.67 mm &nbsp;&nbsp; t<sub>hoop</sub> = (N<sub>hoop</sub> − t<sub>helical</sub>X sin²α)/X = 10.21 mm &nbsp;&nbsp; total = 1.5·p<sub>b</sub>R/X = <b>15.9 mm</b></div>
+              <p>Rounded up to 0.25&nbsp;mm plies: 24 helical (6.0&nbsp;mm) + 41 hoop (10.25&nbsp;mm) = 16.25&nbsp;mm. Laminate theory at the working pressure of 70&nbsp;MPa then gives the strains and ply stresses:</p>
+              <div class="eq">ε<sub>hoop</sub> = 0.0077 &nbsp;&nbsp; ε<sub>axial</sub> = 0.0063 &nbsp;&nbsp; radial growth = ε<sub>hoop</sub>R = <b>1.15 mm</b> &nbsp;&nbsp; σ<sub>1</sub>: hoop <b>950 MPa</b>, helical <b>800 MPa</b></div>
+              <p>Stress across the fibres, which decides matrix cracking (strength 29&nbsp;MPa). A ±15° layer is pulled across its fibres almost in the hoop direction, where the strain is largest:</p>
+              <div class="eq">σ<sub>2</sub> = Q<sub>22</sub>ε<sub>2</sub> + Q<sub>12</sub>ε<sub>1</sub>: hoop layer 72 MPa (IRF 2.5) &nbsp;&nbsp; helical layer <b>81 MPa (IRF 2.8)</b></div>
+              <p>Fibre check: 950/2,231 ≈ 0.43, so fibre failure is expected at about 70/0.43 ≈ 163&nbsp;MPa.</p>
+            </div>
+          </details>
+
+          <details>
+            <summary>Model and discussion</summary>
+            <div class="dbody">
+              <ul>
+                <li>A quarter of the cylinder (R&nbsp;150&nbsp;mm, 300&nbsp;mm long) as layered shells. The 0° reference runs along the axis and the layer normals point outward, so layer&nbsp;1 sits against the liner.</li>
+                <li>Symmetry built by hand on the three cut edges: on each, the movement through the mirror plane and the two tilts out of it are fixed. The closed dome is replaced by its axial pull, 70 × π × 150² / 4 = 1.24&nbsp;MN, on the free end.</li>
+                <li>Every result in the middle of the tank agrees with laminate theory within 1&nbsp;%: the wall works as a membrane there, which is what the hand calculation assumes.</li>
+                <li><strong>Where the model corrected me:</strong> my first check looked at the hoop layers (IRF 2.5). Ansys showed that the helical layers crack first. Redoing the hand check for the helical layers gave 81&nbsp;MPa and IRF 2.8, matching Ansys. The innermost layer is worst because the same growth over a smaller radius means more strain.</li>
+                <li><strong>Error caught by the hand check:</strong> the first run gave 64&nbsp;mm of radial growth instead of 1.15&nbsp;mm. Checking the edge centroids showed two symmetry supports on swapped edges, which stopped the ring from expanding and forced it to bend. After the fix the result matched the prediction.</li>
+                <li>Near the loaded end the stresses rise: the dome is missing and the end force acts 8&nbsp;mm off the middle of the wall. The disturbance fades within about √(R·t) ≈ 50&nbsp;mm, so all values are read in the middle.</li>
+                <li>Engineering meaning: the resin cracks at working pressure while the fibres use only 43&nbsp;% of their strength. This is why a type&nbsp;4 tank needs its gas-tight liner, and why the fibres, not the resin, set the burst pressure.</li>
+                <li>Limits: coarse mesh (about 30&nbsp;mm elements), no dome, linear first-failure estimate of burst. Next steps are a mesh convergence study and modelling the cylinder–dome junction, a known hotspot in real tanks.</li>
+              </ul>
+            </div>
+          </details>
+
+          <p class="takeaway">The model matched laminate theory within 1&nbsp;%, and where it disagreed with my first check, the check had looked at the wrong layer.</p>
+        </div>
+      </article>
+
       <!-- ---------- Project: CFRP ---------- -->
       <article class="project" id="cfrp">
         <div class="meta">
@@ -452,6 +541,7 @@
       <div>
         <h2>In progress</h2>
         <ul class="next">
+          <li><strong>Hydrogen tank, part 2</strong><span>Mesh convergence study and the cylinder–dome junction.</span></li>
           <li><strong>Crack growth in a cracked plate</strong><span>Stress intensity factors, J-integral and fatigue crack growth with Paris' law.</span></li>
           <li><strong>Why the Comet's windows failed</strong><span>Fatigue at square window corners under cabin pressure cycles.</span></li>
           <li><strong>Delamination in a double cantilever beam</strong><span>Cohesive zone modelling and fracture toughness of recycled fibre laminates.</span></li>
