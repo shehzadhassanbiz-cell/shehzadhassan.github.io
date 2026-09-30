@@ -121,15 +121,10 @@
 
   .takeaway{border-left:4px solid var(--hot);padding:4px 0 4px 16px;font-size:1.08rem;margin:18px 0 0;max-width:var(--measure)}
 
-  /* Skills / next */
+  /* Skills */
   .two{display:grid;grid-template-columns:1fr 1fr;gap:40px}
   .skills dt{font-weight:600;margin-top:12px}
   .skills dd{margin:2px 0 0;color:var(--muted)}
-  .next{list-style:none;padding:0;margin:0}
-  .next li{padding:12px 0;border-bottom:1px solid var(--rule)}
-  .next li:last-child{border-bottom:0}
-  .next strong{display:block}
-  .next span{color:var(--muted);font-size:.95rem}
 
   footer{padding:40px 0 64px;border-top:1px solid var(--rule);color:var(--muted);font-size:.95rem}
   footer .legend{margin-bottom:24px}
@@ -291,7 +286,7 @@
                 <li><strong>Error caught by the hand check:</strong> the first run gave 64&nbsp;mm of radial growth instead of 1.15&nbsp;mm. Checking the edge centroids showed two symmetry supports on swapped edges, which stopped the ring from expanding and forced it to bend. After the fix the result matched the prediction.</li>
                 <li>Near the loaded end the stresses rise: the dome is missing and the end force acts 8&nbsp;mm off the middle of the wall. The disturbance fades within about √(R·t) ≈ 50&nbsp;mm, so all values are read in the middle.</li>
                 <li>Engineering meaning: the resin cracks at working pressure while the fibres use only 43&nbsp;% of their strength. This is why a type&nbsp;4 tank needs its gas-tight liner, and why the fibres, not the resin, set the burst pressure.</li>
-                <li>Limits: coarse mesh (about 30&nbsp;mm elements), no dome, linear first-failure estimate of burst. Next steps are a mesh convergence study and modelling the cylinder–dome junction, a known hotspot in real tanks.</li>
+                <li>Limits: coarse mesh (about 30&nbsp;mm elements), no dome, linear first-failure estimate of burst. The cylinder–dome junction, a known hotspot in real tanks, is not captured by this model.</li>
               </ul>
             </div>
           </details>
@@ -525,9 +520,9 @@
     </div>
   </section>
 
-  <!-- ================= Skills & next ================= -->
+  <!-- ================= Skills ================= -->
   <section id="skills">
-    <div class="wrap two">
+    <div class="wrap">
       <div>
         <h2>Skills</h2>
         <dl class="skills">
@@ -537,16 +532,6 @@
           <dt>Background</dt><dd>M.Sc. Materials Engineering, RWTH Aachen; thesis at Fraunhofer IPT on a Digital Shadow for recycled carbon fibre tapes; two years of engineering work in India</dd>
           <dt>Languages</dt><dd>English (C1), German (A1/A2, improving)</dd>
         </dl>
-      </div>
-      <div>
-        <h2>In progress</h2>
-        <ul class="next">
-          <li><strong>Hydrogen tank, part 2</strong><span>Mesh convergence study and the cylinder–dome junction.</span></li>
-          <li><strong>Crack growth in a cracked plate</strong><span>Stress intensity factors, J-integral and fatigue crack growth with Paris' law.</span></li>
-          <li><strong>Why the Comet's windows failed</strong><span>Fatigue at square window corners under cabin pressure cycles.</span></li>
-          <li><strong>Delamination in a double cantilever beam</strong><span>Cohesive zone modelling and fracture toughness of recycled fibre laminates.</span></li>
-          <li><strong>Flexible F1 wings</strong><span>Composite bend-twist coupling: passing a static test yet deflecting on track.</span></li>
-        </ul>
       </div>
     </div>
   </section>
