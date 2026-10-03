@@ -295,6 +295,87 @@
         </div>
       </article>
 
+      <!-- ---------- Project: Fatigue crack ---------- -->
+      <article class="project" id="crack">
+        <div class="meta">
+          <h3>A cracked aluminium panel: how long until it breaks?</h3>
+          <dl>
+            <dt>Tools</dt><dd>Ansys Discovery, Ansys Mechanical 2026 R1, Python</dd>
+            <dt>Methods</dt><dd>Linear elastic fracture mechanics, J-integral on a pre-meshed crack, symmetry modelling, Paris law fatigue integration</dd>
+            <dt>Year</dt><dd>2026</dd>
+          </dl>
+        </div>
+        <div>
+          <p class="summary">A 100&nbsp;mm wide, 5&nbsp;mm thick Al&nbsp;2024-T3 panel with a 20&nbsp;mm crack in the middle, loaded from 0 to 100&nbsp;MPa over and over, like a fuselage skin on every flight. The questions: how hard is the crack tip being pulled open, how long can the crack get before the panel breaks, and how many load cycles does that take?</p>
+
+          <table class="checks">
+            <caption>Prediction vs simulation (crack half length a = 10&nbsp;mm, 100&nbsp;MPa)</caption>
+            <thead><tr><th scope="col">Quantity</th><th scope="col">Hand</th><th scope="col">Ansys</th><th scope="col">Deviation</th></tr></thead>
+            <tbody>
+              <tr><td>Stress intensity factor K<sub>I</sub></td><td class="num">18.17 MPa√m</td><td class="num">18.17 MPa√m</td><td><div class="dev"><span class="bar"><i style="left:49.9%;width:0.1%"></i></span>−0.02 %</div></td></tr>
+              <tr><td>J-integral</td><td class="num">4.65 kJ/m²</td><td class="num">4.647 kJ/m²</td><td><div class="dev"><span class="bar"><i style="left:49.45%;width:0.55%"></i></span>−0.11 %</div></td></tr>
+              <tr><td>Elongation of the quarter model</td><td class="num">0.141 mm</td><td class="num">0.146 mm</td><td><div class="dev"><span class="bar"><i style="left:50%;width:17%"></i></span>+3.4 %</div></td></tr>
+              <tr><td>Critical crack half length</td><td class="num">25.6 mm</td><td colspan="2" class="note">fracture governs: net-section stress 205&nbsp;MPa, below the 325&nbsp;MPa yield strength</td></tr>
+              <tr><td>Fatigue life, a = 10 → 25.6 mm</td><td class="num">109,200 cycles</td><td class="num">109,219 (Python)</td><td class="note">ignoring the panel width: 134,690 (+23 %)</td></tr>
+            </tbody>
+          </table>
+
+          <div class="figs">
+            <figure>
+              <img src="images/P4_setup.png" alt="Sketch of the quarter model: left edge held sideways, uncracked part of the top edge held vertically, crack faces free, 100 MPa pulling on the bottom edge" loading="lazy">
+              <figcaption>Quarter model: the two mirror edges are held only across the mirror line, and the 10&nbsp;mm crack face is left free to open.</figcaption>
+            </figure>
+            <figure>
+              <img src="images/P4_mesh.png" alt="Mesh of the quarter panel, fine at the crack tip in the top left corner and coarse elsewhere" loading="lazy">
+              <figcaption>Quarter panel mesh: refined at the crack tip, about 2,700 nodes in total.</figcaption>
+            </figure>
+            <figure>
+              <img src="images/P4_mesh_tip.png" alt="Mesh around the crack tip with 0.1 mm elements in a half circle, growing coarser outwards" loading="lazy">
+              <figcaption>0.1&nbsp;mm elements within 2&nbsp;mm of the crack tip, coarse elsewhere.</figcaption>
+            </figure>
+            <figure>
+              <img src="images/P4_deformation.png" alt="Vertical displacement contour, exaggerated, with the crack face sagging away from the top edge while the uncracked part stays on it" loading="lazy">
+              <figcaption>Vertical displacement, exaggerated: the crack face pulls away from the mirror line while the uncracked part stays on it.</figcaption>
+            </figure>
+            <figure class="wide">
+              <img src="images/P4_J_K_contours.png" alt="J-integral and K for contours 1 to 6: contour 1 slightly low, contours 2 to 6 equal and within 0.11 percent of the hand calculation" loading="lazy">
+              <figcaption>J and K on six rings around the crack tip: the first ring sits in the tip singularity, rings 2 to 6 agree to four digits with each other and within 0.11&nbsp;% with the hand calculation.</figcaption>
+            </figure>
+          </div>
+
+          <details>
+            <summary>Hand calculation</summary>
+            <div class="dbody">
+              <p>Stress intensity at the crack tip, with the finite-width correction for a centre crack (W = 100&nbsp;mm, a = 10&nbsp;mm):</p>
+              <div class="eq">Y = √sec(πa/W) = 1.025 &nbsp;&nbsp; K<sub>I</sub> = Yσ√(πa) = 1.025 · 100 · √(π · 0.010) = <b>18.17 MPa√m</b></div>
+              <p>The panel is thin: plane strain would need a thickness of 2.5(K<sub>Ic</sub>/σ<sub>ys</sub>)² = 27.4&nbsp;mm, so plane stress applies and</p>
+              <div class="eq">J = K<sub>I</sub>²/E = 18.17² / 71,000 = <b>4.65 kJ/m²</b></div>
+              <p>The crack becomes critical when K reaches the fracture toughness K<sub>Ic</sub> = 34&nbsp;MPa√m. Since Y grows with a, this was solved by bracketing:</p>
+              <div class="eq">Y(a<sub>c</sub>)·σ·√(πa<sub>c</sub>) = 34 MPa√m &nbsp;&nbsp; → &nbsp;&nbsp; a<sub>c</sub> = <b>25.6 mm</b> &nbsp;&nbsp; σ<sub>net</sub> = σW/(W − 2a<sub>c</sub>) = 205 MPa &lt; 325 MPa</div>
+              <p>Fatigue life from the Paris law (C = 10<sup>−11</sup>, m = 3, Δσ = 100&nbsp;MPa, R = 0), integrated from 10 to 25.6&nbsp;mm:</p>
+              <div class="eq">da/dN = C(ΔK)<sup>m</sup> &nbsp;&nbsp; N<sub>f</sub> = ∫ da / [C(YΔσ√(πa))<sup>m</sup>] &nbsp;&nbsp; Y = 1: 134,690 &nbsp;&nbsp; Y(a): <b>109,200 cycles</b></div>
+            </div>
+          </details>
+
+          <details>
+            <summary>Model and discussion</summary>
+            <div class="dbody">
+              <ul>
+                <li>A quarter of the panel (50 × 100&nbsp;mm) in 2D plane stress, 5&nbsp;mm thick. The left edge may only move up and down, the uncracked part of the crack line may only slide sideways, and the crack face carries no support so the crack can open.</li>
+                <li>The crack is defined as a pre-meshed crack with symmetry on, so Ansys accounts for the mirrored half. J is evaluated on six rings of elements around the tip, with quadratic 0.1&nbsp;mm elements near the tip.</li>
+                <li>The first ring is 0.8&nbsp;% low because it runs through the elements at the singular tip. Rings 2 to 6 agree to four digits: J is path independent, which shows the tip mesh is fine enough.</li>
+                <li>The panel stretches 3&nbsp;% more than an uncracked bar of the same size. The crack makes the panel slightly softer, which the bar formula does not include.</li>
+                <li>Fatigue: the crack grows from 10 to 25.6&nbsp;mm in about 109,000 cycles. Treating the panel as infinitely wide (Y = 1) predicts 23&nbsp;% more life, an error on the unsafe side. The Python integration converged from 106,602 cycles with 3 steps to 109,219 with 1,000, the same idea as a mesh study.</li>
+                <li>K<sub>Ic</sub> is a plane-strain value; a thin 5&nbsp;mm panel is tougher in reality, so the critical crack length is on the safe side.</li>
+                <li>Limits: linear elastic, no plastic zone or crack closure, textbook Paris constants instead of test data for this alloy and stress ratio.</li>
+              </ul>
+            </div>
+          </details>
+
+          <p class="takeaway">Paper and FE agree on the crack-tip loading within 0.1&nbsp;%, and ignoring the panel's width would have promised almost a quarter more life than it has.</p>
+        </div>
+      </article>
+
       <!-- ---------- Project: CFRP ---------- -->
       <article class="project" id="cfrp">
         <div class="meta">
@@ -527,7 +608,7 @@
         <h2>Skills</h2>
         <dl class="skills">
           <dt>Simulation</dt><dd>Ansys Mechanical, Ansys ACP, Abaqus (coursework), OpenFOAM</dd>
-          <dt>Engineering methods</dt><dd>Laminate theory, stress concentration, damage and fracture mechanics, failure criteria, analytical validation</dd>
+          <dt>Engineering methods</dt><dd>Laminate theory, stress concentration, damage and fracture mechanics (K, J-integral), fatigue crack growth, failure criteria, analytical validation</dd>
           <dt>Programming and data</dt><dd>Python, C/C++</dd>
           <dt>Background</dt><dd>M.Sc. Materials Engineering, RWTH Aachen; thesis at Fraunhofer IPT on a Digital Shadow for recycled carbon fibre tapes; two years of engineering work in India</dd>
           <dt>Languages</dt><dd>English (C1), German (A1/A2, improving)</dd>
