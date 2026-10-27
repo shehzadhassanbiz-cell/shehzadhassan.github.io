@@ -376,6 +376,127 @@
         </div>
       </article>
 
+      <!-- ---------- Project: Skin panel buckling ---------- -->
+      <article class="project" id="buckling">
+        <div class="meta">
+          <h3>A fuselage skin panel in compression: when does it buckle?</h3>
+          <dl>
+            <dt>Tools</dt><dd>Ansys Mechanical 2026 R1, Python</dd>
+            <dt>Methods</dt><dd>Classical plate buckling theory, linear eigenvalue buckling with shell elements, mesh convergence</dd>
+            <dt>Year</dt><dd>2026</dd>
+          </dl>
+        </div>
+        <div>
+          <p class="summary">One bay of aircraft fuselage skin: 1.6&nbsp;mm of Al&nbsp;2024-T3 between two frames 533.4&nbsp;mm apart and two stringers 150&nbsp;mm apart. When the fuselage bends, this skin is squeezed along its length. The questions: at what stress does the flat skin pop out into waves, what shape do the waves take, and can a shell model predict both?</p>
+
+          <table class="checks">
+            <caption>Prediction vs simulation (final mesh, 5&nbsp;mm elements)</caption>
+            <thead><tr><th scope="col">Quantity</th><th scope="col">Hand</th><th scope="col">Ansys</th><th scope="col">Deviation</th></tr></thead>
+            <tbody>
+              <tr><td>Critical stress, 1st mode</td><td class="num">30.83 MPa</td><td class="num">30.80 MPa</td><td><div class="dev"><span class="bar"><i style="left:49.6%;width:0.4%"></i></span>−0.1 %</div></td></tr>
+              <tr><td>Critical load on the 150&nbsp;mm edge</td><td class="num">7.40 kN</td><td class="num">7.39 kN</td><td><div class="dev"><span class="bar"><i style="left:49.6%;width:0.4%"></i></span>−0.1 %</div></td></tr>
+              <tr><td>Critical stress, 2nd mode</td><td class="num">31.30 MPa</td><td class="num">31.27 MPa</td><td><div class="dev"><span class="bar"><i style="left:49.5%;width:0.5%"></i></span>−0.1 %</div></td></tr>
+              <tr><td>Buckle shape, 1st mode</td><td class="num">4 half-waves</td><td class="num">4 half-waves</td><td class="note">2nd mode: 3 half-waves in both</td></tr>
+              <tr><td>Python check of the hand calculation</td><td class="num">30.83 MPa</td><td class="num">30.84 MPa</td><td class="note">same formula scripted, 0.02&nbsp;% rounding difference</td></tr>
+            </tbody>
+          </table>
+
+          <div class="chart">
+            <svg viewBox="0 0 560 250" role="img" aria-labelledby="bucklTitle bucklDesc">
+              <title id="bucklTitle">Mesh convergence of the critical buckling stress</title>
+              <desc id="bucklDesc">Critical stress for three meshes: 31.56 MPa with 20 mm elements, 30.98 with 10 mm and 30.80 with 5 mm, compared with the hand calculation of 30.83 MPa.</desc>
+              <!-- axes: x 60..540 for element size 22..0 mm ; y 210..20 for 30.6..31.8 MPa -->
+              <line x1="60" y1="210" x2="540" y2="210" stroke="#5E6B77"/>
+              <line x1="60" y1="20" x2="60" y2="210" stroke="#5E6B77"/>
+              <g stroke="#D5DCE2">
+                <line x1="60" y1="178.3" x2="540" y2="178.3"/><line x1="60" y1="146.7" x2="540" y2="146.7"/><line x1="60" y1="115" x2="540" y2="115"/><line x1="60" y1="83.3" x2="540" y2="83.3"/><line x1="60" y1="51.7" x2="540" y2="51.7"/><line x1="60" y1="20" x2="540" y2="20"/>
+              </g>
+              <text x="52" y="182.3" text-anchor="end">30.8</text>
+              <text x="52" y="119" text-anchor="end">31.2</text>
+              <text x="52" y="55.7" text-anchor="end">31.6</text>
+              <text x="103.6" y="230" text-anchor="middle">20</text>
+              <text x="212.7" y="230" text-anchor="middle">15</text>
+              <text x="321.8" y="230" text-anchor="middle">10</text>
+              <text x="430.9" y="230" text-anchor="middle">5</text>
+              <text x="540" y="230" text-anchor="middle">0</text>
+              <text x="300" y="248" text-anchor="middle">element size (mm), finer to the right</text>
+              <text x="14" y="115" transform="rotate(-90 14 115)" text-anchor="middle">critical stress (MPa)</text>
+              <!-- hand 30.83 -> y = 210 - (0.23/1.2)*190 = 173.6 -->
+              <line x1="60" y1="173.6" x2="540" y2="173.6" stroke="#C8321E" stroke-dasharray="6 5"/>
+              <text x="68" y="194" style="fill:#C8321E">hand calculation 30.83 MPa</text>
+              <!-- points: x = 60 + (22 - h)/22*480 ; y = 210 - (s - 30.6)/1.2*190 -->
+              <polyline fill="none" stroke="#35556F" stroke-width="2" points="103.6,58.5 321.8,149.2 430.9,177.7"/>
+              <g fill="#35556F">
+                <circle cx="103.6" cy="58.5" r="5"/><circle cx="321.8" cy="149.2" r="5"/><circle cx="430.9" cy="177.7" r="5"/>
+              </g>
+              <text x="112" y="50">216 elements: 31.56</text>
+              <text x="330" y="140">810: 30.98</text>
+              <text x="430.9" y="198" text-anchor="middle">3,210: 30.80</text>
+            </svg>
+          </div>
+
+          <div class="figs">
+            <figure>
+              <img src="images/P5_setup.png" alt="Flat panel with markers: A on the short edge at the start held along the length and out of plane, B on the other three edges held only out of plane, C at one corner held sideways, D a 240 N compressive force on the far short edge" loading="lazy">
+              <figcaption>Supports: all four edges held out of plane but free to slide in plane (A, B), one end held lengthwise (A), one corner held sideways (C), 240&nbsp;N push on the far edge (D).</figcaption>
+            </figure>
+            <figure>
+              <img src="images/P5_mesh.png" alt="Uniform mesh of square shell elements over the whole panel" loading="lazy">
+              <figcaption>Final mesh: 5&nbsp;mm square shell elements, 3,210 elements.</figcaption>
+            </figure>
+            <figure>
+              <img src="images/P5_mode1.png" alt="First buckling mode: four bulges along the length of the panel" loading="lazy">
+              <figcaption>1st mode at 30.80&nbsp;MPa: four half-waves, as the hand calculation predicts.</figcaption>
+            </figure>
+            <figure>
+              <img src="images/P5_mode2.png" alt="Second buckling mode: three bulges along the length of the panel" loading="lazy">
+              <figcaption>2nd mode at 31.27&nbsp;MPa: three half-waves, only 1.5&nbsp;% above the first.</figcaption>
+            </figure>
+            <figure class="wide">
+              <img src="images/P5_k_aspect.png" alt="Buckling coefficient k against aspect ratio a/b for one to five half-waves; the lowest curve forms a scalloped line near k = 4, with this panel marked at a/b = 3.56 and k = 4.056" loading="lazy">
+              <figcaption>From the Python script: k for 1 to 5 half-waves. The panel always buckles on the lowest curve; at a/b = 3.56 that is 4 half-waves (k = 4.056), with 3 half-waves close behind.</figcaption>
+            </figure>
+          </div>
+
+          <details>
+            <summary>Hand calculation</summary>
+            <div class="dbody">
+              <p>A long thin plate, simply supported on all four edges, compressed along its length. Al&nbsp;2024-T3: E = 72,400&nbsp;MPa, ν = 0.33.</p>
+              <div class="eq">C = π²E / (12(1 − ν²)) = π² · 72,400 / (12 · 0.8911) = 66,824 MPa &nbsp;&nbsp; a/b = 533.4/150 = 3.556</div>
+              <p>The plate buckles into the number of half-waves m that needs the least stress:</p>
+              <div class="eq">k(m) = (m·b/a + a/(m·b))² &nbsp;&nbsp; m = 3: 4.117 &nbsp;&nbsp; m = 4: <b>4.056</b> &nbsp;&nbsp; m = 5: 4.483</div>
+              <div class="eq">σ<sub>cr</sub> = k·C·(t/b)² = 4.056 · 66,824 · (1.6/150)² = <b>30.83 MPa</b> &nbsp;&nbsp; P<sub>cr</sub> = σ<sub>cr</sub>·b·t = <b>7.40 kN</b></div>
+              <p>The same for m = 3 gives 31.30&nbsp;MPa, the second mode. In Ansys a 240&nbsp;N push gives exactly 1&nbsp;MPa in the skin, so the load multiplier λ reads directly as σ<sub>cr</sub> in MPa.</p>
+            </div>
+          </details>
+
+          <details>
+            <summary>Model, mesh convergence and discussion</summary>
+            <div class="dbody">
+              <div class="table-scroll">
+              <table class="checks">
+                <thead><tr><th scope="col">Element size</th><th scope="col">Elements</th><th scope="col">σ<sub>cr</sub>, 1st mode</th><th scope="col">vs 30.83 MPa</th></tr></thead>
+                <tbody>
+                  <tr><td>20 mm</td><td class="num">216</td><td class="num">31.56 MPa</td><td class="num">+2.4 %</td></tr>
+                  <tr><td>10 mm</td><td class="num">810</td><td class="num">30.98 MPa</td><td class="num">+0.5 %</td></tr>
+                  <tr><td>5 mm</td><td class="num">3,210</td><td class="num">30.80 MPa</td><td class="num">−0.1 %</td></tr>
+                </tbody>
+              </table>
+              </div>
+              <ul>
+                <li>The skin is a 1.6&nbsp;mm shell. Every edge is held out of plane but may slide in plane, so the plate can shorten and widen freely, as the theory assumes. One end and one corner are fixed only to stop the panel from sliding away as a whole.</li>
+                <li>Coarse shell elements are slightly too stiff, so they overestimate the buckling stress. Halving the element size from 10 to 5&nbsp;mm changes the result by 0.6&nbsp;%, so the 5&nbsp;mm mesh is converged. The buckle shape is already right on the coarsest mesh; only the number improves.</li>
+                <li>Modes 1 and 2 are only 1.5&nbsp;% apart. In a real panel, small imperfections decide which one appears, so both shapes matter.</li>
+                <li>The plot shows the shape of each mode scaled to a maximum of 1; an eigenvalue analysis gives the buckling load and the shape, not the real size of the waves.</li>
+                <li>Limits: a perfectly flat, elastic plate on ideal supports. Real skins buckle somewhat earlier because of small initial waviness, and frames and stringers are neither perfect hinges nor fully rigid. A thin skin also keeps carrying load after it buckles. The next step is a nonlinear analysis with a small imperfection shaped like the first mode.</li>
+              </ul>
+            </div>
+          </details>
+
+          <p class="takeaway">The skin buckles at about 31&nbsp;MPa, less than a tenth of the stress the aluminium could carry before yielding. Paper, Python and Ansys agree within 0.1&nbsp;% on the stress and exactly on the shape.</p>
+        </div>
+      </article>
+
       <!-- ---------- Project: CFRP ---------- -->
       <article class="project" id="cfrp">
         <div class="meta">
