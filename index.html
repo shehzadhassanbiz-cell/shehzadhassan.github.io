@@ -205,6 +205,122 @@
         <p>Deviation bars show the simulation relative to the hand prediction, on a scale of ±10&nbsp;%.</p>
       </div>
 
+      <!-- ---------- Project: Damage calibration Part 1 ---------- -->
+      <article class="project" id="calibration">
+        <div class="meta">
+          <h3>When does a high-strength steel crack? Calibrating a fracture model from test data (Part 1)</h3>
+          <dl>
+            <dt>Tools</dt><dd>Python (pandas, NumPy, SciPy, Matplotlib)</dd>
+            <dt>Methods</dt><dd>True stress–strain from DIC data, Swift and Voce hardening laws, Modified Mohr–Coulomb (Bai–Wierzbicki) fracture locus, non-linear least-squares fitting</dd>
+            <dt>Data</dt><dd>Published open data: NIST Numisheet 2020 (DP980), Li et al. 2024 (QP1000)</dd>
+            <dt>Year</dt><dd>2026, in progress</dd>
+          </dl>
+        </div>
+        <div>
+          <p class="summary">Crash and forming simulations need to know when a sheet steel will crack, for every way it can be loaded. Testing every loading case is impossible, so engineers fit a fracture model to a few well-chosen tests. Here I take published test data for two advanced high-strength steels, build the flow curve from raw tensile data, and calibrate a Modified Mohr–Coulomb fracture locus for a quench-and-partitioning steel in three sheet directions. The questions: how far can a simple model be trusted, and does the direction of the sheet matter?</p>
+
+          <table class="checks">
+            <caption>Fracture model vs 15 tests (QP1000, rms error per direction)</caption>
+            <thead><tr><th scope="col">Direction</th><th scope="col">Simplified MMC (c₃ = 1)</th><th scope="col">Full MMC (c₁, c₂, c₃)</th><th scope="col">Worst single test, full model</th></tr></thead>
+            <tbody>
+              <tr><td>RD (rolling, 0°)</td><td class="num">25.6 %</td><td class="num"><b>1.6 %</b></td><td class="num">−2.9 % (NDBR25)</td></tr>
+              <tr><td>DD (diagonal, 45°)</td><td class="num">21.1 %</td><td class="num"><b>3.0 %</b></td><td class="num">+4.8 % (NDBR6)</td></tr>
+              <tr><td>TD (transverse, 90°)</td><td class="num">11.5 %</td><td class="num"><b>1.1 %</b></td><td class="num">+1.8 % (NDBR6)</td></tr>
+            </tbody>
+          </table>
+
+          <table class="checks">
+            <caption>Fracture strain at three key loading states (from the fitted model)</caption>
+            <thead><tr><th scope="col">Loading state</th><th scope="col">RD</th><th scope="col">DD</th><th scope="col">TD</th></tr></thead>
+            <tbody>
+              <tr><td>Shear (η = 0, θ̄ = 0)</td><td class="num">0.76</td><td class="num">0.80</td><td class="num">0.85</td></tr>
+              <tr><td>Uniaxial tension (η = 1/3, θ̄ = 1)</td><td class="num">1.00</td><td class="num">0.85</td><td class="num">0.86</td></tr>
+              <tr><td>Plane strain (η = 0.58, θ̄ = 0)</td><td class="num">0.74</td><td class="num">0.58</td><td class="num"><b>0.45</b></td></tr>
+            </tbody>
+          </table>
+          <p class="scale-note">In plane strain, the worst case in forming, the transverse direction fails about 40&nbsp;% earlier than the rolling direction; in shear it is slightly better.</p>
+
+          <div class="figs">
+            <figure class="wide">
+              <img src="images/C1_flowcurve.png" alt="Left: engineering and true stress-strain curves of a DP980 tensile test, with maximum force at 0.081 strain and 996 MPa. Right: true plastic flow curve with Swift and Voce fits; both match the test data, but extrapolated to a strain of 0.5 Swift gives 1231 MPa and Voce 1065 MPa." loading="lazy">
+              <figcaption>Step 1, DP980: true stress–strain curve from the raw DIC data (a virtual extensometer between two DIC points 25&nbsp;mm apart), cut at maximum force. Swift and Voce both fit the measured range within a few MPa, but at a strain of 0.5 they differ by about 16&nbsp;%. The choice of extrapolation matters for crash and forming.</figcaption>
+            </figure>
+            <figure>
+              <img src="images/C2_tests.png" alt="Fracture strain against stress triaxiality for 15 tests on QP1000 in three directions. The tensile specimen CHD6 is highest, shear specimens are lower despite lower triaxiality, notched specimens are lowest, and directions spread apart at high triaxiality." loading="lazy">
+              <figcaption>Step 2, QP1000 test data: shear specimens (SH) fail earlier than the tensile specimen (CHD6) although their triaxiality is lower. Triaxiality alone cannot explain fracture; the type of loading (Lode parameter) matters too.</figcaption>
+            </figure>
+            <figure>
+              <img src="images/C2_hardening.png" alt="Flow stress against plastic strain for RD, DD and TD: the study's Swift-Voce curves as solid lines and the fitted power laws as dashed lines, close to each other between strains of 0.02 and 1." loading="lazy">
+              <figcaption>Hardening per direction: the study's Swift–Voce curves (solid) refitted as power laws σ = Aεⁿ (dashed) for use in the MMC model.</figcaption>
+            </figure>
+            <figure>
+              <img src="images/C2_parity.png" alt="Predicted against measured fracture strain for all 15 tests; all points lie within a ±5 percent band around the diagonal." loading="lazy">
+              <figcaption>Full MMC model against all 15 tests: every test within ±5&nbsp;%.</figcaption>
+            </figure>
+            <figure>
+              <img src="images/C2_locus.png" alt="Fitted fracture locus along the plane-stress path for RD, DD and TD: a peak at uniaxial tension and a minimum near plane strain; TD lowest at high triaxiality." loading="lazy">
+              <figcaption>Fracture locus for sheet loading (plane-stress path): highest under uniaxial tension, lowest near plane strain. The notched specimens sit a little off the curves because their Lode parameter is not exactly on the sheet path.</figcaption>
+            </figure>
+            <figure class="wide">
+              <img src="images/C2_surfaces.png" alt="Three 3D fracture surfaces, fracture strain over triaxiality and Lode parameter, for RD, DD and TD, with the 15 tests on the surfaces and the plane-stress path as a black line." loading="lazy">
+              <figcaption>The full fracture surface ε<sub>f</sub>(η, θ̄) per direction, shown only for θ̄ = 0…1, the range covered by the tests. Red points: tests; black line: plane-stress path.</figcaption>
+            </figure>
+          </div>
+
+          <details>
+            <summary>Step 1: flow curve of DP980 from raw test data</summary>
+            <div class="dbody">
+              <p>Raw file: 589 time steps of force, crosshead displacement and DIC strain fields along the specimen centre line (NIST Numisheet 2020 benchmark). Cross-section A₀ = 17.845&nbsp;mm².</p>
+              <div class="eq">σ<sub>eng</sub> = F / A₀ &nbsp;&nbsp; ε<sub>eng</sub> = ΔL / L₀ (DIC points 25 mm apart) &nbsp;&nbsp; σ<sub>max</sub> = <b>996 MPa</b> at ε<sub>eng</sub> = <b>0.081</b></div>
+              <div class="eq">ε<sub>true</sub> = ln(1 + ε<sub>eng</sub>) &nbsp;&nbsp; σ<sub>true</sub> = σ<sub>eng</sub>(1 + ε<sub>eng</sub>) &nbsp;&nbsp; ε<sub>p</sub> = ε<sub>true</sub> − σ<sub>true</sub>/E</div>
+              <p>Check: necking should start where the true plastic strain equals the hardening exponent (Considère). ln(1.081) = 0.078, and the fitted exponent is 0.07, so the test behaves as theory expects.</p>
+              <div class="eq">Swift: σ = K(ε₀ + ε<sub>p</sub>)ⁿ, K = 1292 MPa, n = 0.070 &nbsp;&nbsp; Voce: σ = σ₀ + Q(1 − e<sup>−bε<sub>p</sub></sup>), σ₀ = 793, Q = 272 MPa, b = 57.7</div>
+              <ul>
+                <li>Inside the measured range both laws agree (Swift rms ≈ 1&nbsp;MPa, Voce ≈ 10&nbsp;MPa).</li>
+                <li>Beyond necking there is no data: at ε<sub>p</sub> = 0.5 Swift predicts 1231&nbsp;MPa and Voce 1065&nbsp;MPa. In practice the two are often blended, which is what the QP1000 study in Step 2 does.</li>
+              </ul>
+            </div>
+          </details>
+
+          <details>
+            <summary>Step 2: fracture locus of QP1000 (Modified Mohr–Coulomb)</summary>
+            <div class="dbody">
+              <p>Five specimen shapes per direction load the steel differently: shear (SH), uniaxial tension (CHD6) and three notched bars (NDBR25/10/6). For each test the study reports the fracture strain ε<sub>f</sub>, the stress triaxiality η (how strongly the material is pulled open from all sides) and the Lode parameter θ̄ (+1 for uniaxial tension, 0 for shear and plane strain).</p>
+              <div class="eq">ε<sub>f</sub> = { (A/c₂) · [c₃ + k(1 − c₃)(sec(θ̄π/6) − 1)] · [√((1+c₁²)/3)·cos(θ̄π/6) + c₁(η + ⅓ sin(θ̄π/6))] }<sup>−1/n</sup>, &nbsp; k = √3/(2 − √3)</div>
+              <p>A and n come from the study's Swift–Voce hardening curves (ε<sub>p</sub> &gt; 0.02), refitted as a power law σ = Aεⁿ: RD A = 1598&nbsp;MPa, n = 0.125 · DD 1599, 0.132 · TD 1645, 0.136. The parameters c₁, c₂, c₃ are fitted to the five tests of each direction with non-linear least squares (SciPy <span class="math">curve_fit</span>, physical bounds).</p>
+              <div class="table-scroll">
+              <table class="checks">
+                <thead><tr><th scope="col">Direction</th><th scope="col">c₁</th><th scope="col">c₂ (MPa)</th><th scope="col">c₃</th><th scope="col">rms error</th></tr></thead>
+                <tbody>
+                  <tr><td>RD</td><td class="num">0.003</td><td class="num">802</td><td class="num">0.900</td><td class="num">1.6 %</td></tr>
+                  <tr><td>DD</td><td class="num">0.043</td><td class="num">817</td><td class="num">0.910</td><td class="num">3.0 %</td></tr>
+                  <tr><td>TD</td><td class="num">0.090</td><td class="num">881</td><td class="num">0.944</td><td class="num">1.1 %</td></tr>
+                </tbody>
+              </table>
+              </div>
+              <ul>
+                <li>With c₃ fixed at 1 (no extra Lode term) the model overpredicts the tensile specimen by up to 35&nbsp;% and underpredicts all notched specimens. Freeing c₃ brings every test within ±5&nbsp;%: this steel is strongly Lode-dependent.</li>
+                <li>c₁, which controls how much triaxiality lowers ductility, rises from RD to TD. A likely reason: rolling stretches inclusions and hard martensite bands along RD, and when the sheet is loaded across them they can open like small pre-existing cracks, most of all under high triaxiality. Confirming this would need the fracture surfaces (fractography).</li>
+              </ul>
+            </div>
+          </details>
+
+          <details>
+            <summary>Limits and next steps</summary>
+            <div class="dbody">
+              <ul>
+                <li>Five tests per direction for three parameters: the fit is tight, and the parameters carry real uncertainty. Next: quantify it and find which extra test would reduce it most.</li>
+                <li>η and θ̄ are the study's averaged values. In a real test both change as the notch deforms. Next: simulate the specimens in FEM, accumulate damage along the actual loading path (D = Σ Δε<sub>p</sub>/ε<sub>f</sub>(η, θ̄), crack at D = 1) and recalibrate inversely.</li>
+                <li>The surface is only shown for θ̄ = 0…1, where tests exist. Outside that range the model would extrapolate.</li>
+              </ul>
+              <p>Data sources: <a href="https://doi.org/10.18434/M32202">NIST Numisheet 2020 benchmark data (doi 10.18434/M32202)</a>; Z. Li, F. Shen, Y. Liu, C. Hartmann, R. Norz, S. Münstermann, W. Volk, J. Min, J. Lian, <a href="https://www.sciencedirect.com/science/article/pii/S2238785424012687"><i>Anisotropic fracture behavior of the 3rd generation AHSS Q&amp;P steel</i>, J. Mater. Res. Technol. 30 (2024) 9395–9414</a>, open access (CC BY). Model: Y. Bai, T. Wierzbicki, Int. J. Fract. 161 (2010) 1–20.</p>
+            </div>
+          </details>
+
+          <p class="takeaway">A simplified fracture model missed by up to 35&nbsp;%; adding the Lode term brought all 15 tests within ±5&nbsp;%. The calibrated model shows that this steel cracks about 40&nbsp;% earlier in plane strain when loaded across the rolling direction, so the sheet direction matters as much as the loading state.</p>
+        </div>
+      </article>
+
       <!-- ---------- Project: H2 tank ---------- -->
       <article class="project" id="h2tank">
         <div class="meta">
@@ -743,7 +859,7 @@
   <div class="wrap">
     <div class="legend" aria-hidden="true"></div>
     <p>Muhammed Shehzad Hassan, Aachen, Germany · <a href="mailto:shehzadhassanbiz@gmail.com">shehzadhassanbiz@gmail.com</a> · <a href="https://www.linkedin.com/in/shehzad-hassan-6b0656214/">LinkedIn</a></p>
-    <p>All projects built with Ansys Student and OpenFOAM on generic geometries; no company data used.</p>
+    <p>All projects built with Ansys Student, OpenFOAM and Python on generic geometries or published open data; no company data used.</p>
   </div>
 </footer>
 
