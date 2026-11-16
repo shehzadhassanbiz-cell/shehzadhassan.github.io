@@ -219,6 +219,7 @@
         <div>
           <p class="summary">Crash and forming simulations need to know when a sheet steel will crack, for every way it can be loaded. Testing every loading case is impossible, so engineers fit a fracture model to a few well-chosen tests. Here I take published test data for two advanced high-strength steels, build the flow curve from raw tensile data, and calibrate a Modified Mohr–Coulomb fracture locus for a quench-and-partitioning steel in three sheet directions. The questions: how far can a simple model be trusted, and does the direction of the sheet matter?</p>
 
+          <div class="table-scroll">
           <table class="checks">
             <caption>Fracture model vs 15 tests (QP1000, rms error per direction)</caption>
             <thead><tr><th scope="col">Direction</th><th scope="col">Simplified MMC (c₃ = 1)</th><th scope="col">Full MMC (c₁, c₂, c₃)</th><th scope="col">Worst single test, full model</th></tr></thead>
@@ -228,7 +229,9 @@
               <tr><td>TD (transverse, 90°)</td><td class="num">11.5 %</td><td class="num"><b>1.1 %</b></td><td class="num">+1.8 % (NDBR6)</td></tr>
             </tbody>
           </table>
+          </div>
 
+          <div class="table-scroll">
           <table class="checks">
             <caption>Fracture strain at three key loading states (from the fitted model)</caption>
             <thead><tr><th scope="col">Loading state</th><th scope="col">RD</th><th scope="col">DD</th><th scope="col">TD</th></tr></thead>
@@ -238,6 +241,7 @@
               <tr><td>Plane strain (η = 0.58, θ̄ = 0)</td><td class="num">0.74</td><td class="num">0.58</td><td class="num"><b>0.45</b></td></tr>
             </tbody>
           </table>
+          </div>
           <p class="scale-note">In plane strain, the worst case in forming, the transverse direction fails about 40&nbsp;% earlier than the rolling direction; in shear it is slightly better.</p>
 
           <div class="figs">
